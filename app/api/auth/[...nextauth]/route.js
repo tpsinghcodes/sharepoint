@@ -7,7 +7,10 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 
 const handler = NextAuth({
     providers: [
-      
+        GoogleProvider({
+            clientId: process.env.GOOGLE_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        }),
       CredentialsProvider({       
                  
         name: "credentials",
@@ -66,7 +69,7 @@ const handler = NextAuth({
           if(token.user){ 
               if(session.user){
                   session.user.name = token.user.username   
-                  session.user.id = token.user._id
+                  session.user.id = token.user._id.toString()
               }
           }            
           return Promise.resolve(session)
