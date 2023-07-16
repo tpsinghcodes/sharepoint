@@ -66,7 +66,7 @@ const handler = NextAuth({
           if(token.user){ 
               if(session.user){
                   session.user.name = token.user.username   
-                  session.user.id = token.user._id
+                  session.user.id = token.user._id.toString()
               }
           }            
           return Promise.resolve(session)
