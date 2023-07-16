@@ -91,6 +91,24 @@ const LoginForm = () => {
           </button>
         </div>
       </form>
+      {providers &&
+              Object.values(providers).map((provider) => {      
+                return ((provider.name == "credentials")?"":
+                <div className="mt-10 w-full flex flex-row justify-center justify-items-center">  
+                <div>        
+                <button
+                  type='button'
+                  key={provider.name}
+                  onClick={() => {
+                    signIn(provider.id);
+                  }}
+                  className='black_btn'
+                >
+                  Sign with {provider.name}
+                </button> 
+                </div>
+                </div> )            
+              })}
     </section>
     // <>
     // {providers &&

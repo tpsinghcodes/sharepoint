@@ -34,8 +34,16 @@ const handler = NextAuth({
             if(!isPasswordCorrect){
                 return null
             }
-            
-            return userData
+            if(userData){
+                const userInfo = {
+                    name: userData.username,
+                    email:userData.email,
+                    picture:userData.image,
+                    id:userData._id.toString(),
+                }
+                return userInfo
+            }
+            return null
             
         }
     })
@@ -54,24 +62,50 @@ const handler = NextAuth({
     },
     callbacks: {
       // This will be use if other auth provider is used
-      async signIn({ user }) {             
-          return true;          
+      async signIn({ account, profile, user, credentials }) {
+        
+        try {
+            if(profile){
+                await connectToDB();
+        
+                // check if user already exists
+                const userExists = await User.findOne({ email: profile.email });
+        
+                // if not, create a new document and save user in MongoDB
+                if (!userExists) {
+                    await User.create({
+                    email: profile.email,
+                    username: profile.name.replace(" ", "").toLowerCase(),
+                    image: profile.picture,
+                    });
+                }
+            }
+  
+          return true
+        } catch (error) {
+          console.log("Error checking if user exists: ", error.message);
+          return false
+        }
       },
-      async jwt ({ token, user }){            
+      async jwt ({ token, user }){                
           if(user){
               token = { user }
-          }    
+          }   
+          
           return Promise.resolve(token) 
       },
 
       async session({ session, token, user }) {
-          
+        
+        const sessionUser = await User.findOne({ email: token.user.email });
+        
           if(token.user){ 
               if(session.user){
-                  session.user.name = token.user.username   
-                  session.user.id = token.user._id.toString()
+                  session.user.name = token.user.name   
+                  session.user.id = sessionUser._id.toString();
+                  session.user.image = sessionUser.image
               }
-          }            
+          }                               
           return Promise.resolve(session)
       },
     }

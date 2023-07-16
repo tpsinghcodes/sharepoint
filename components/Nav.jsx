@@ -53,6 +53,12 @@ const Nav = () => {
             </div>
         ):(
           <>
+          <Link
+                type='button'
+                className='black_btn'
+                href='/signin'>
+                  Sign in
+                </Link>
            {providers &&
               Object.values(providers).map((provider) => (
                 <>
@@ -66,13 +72,7 @@ const Nav = () => {
                 >
                   Sign in
                 </button> */}
-                <Link
-                type='button'
-                key={provider.name}
-                className='black_btn'
-                href='/signin'>
-                  Sign in
-                </Link>
+                
                 </>
               ))}
           </>
